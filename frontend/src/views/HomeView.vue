@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ArtistSearch from '@/components/ArtistSearch.vue'
 import ArtistCard from '@/components/ArtistCard.vue'
-import { ref } from 'vue'
+import { ref, onUpdated } from 'vue'
 
 const artistName = ref('')
 const artist = ref(null)
@@ -15,7 +15,7 @@ async function handleSearch(name: string) {
   <main>
     <div class="home-container">
       <ArtistSearch v-model="artistName" @search="handleSearch" />
-      <ArtistCard v-if="artist" :artist="artist" />
+      <ArtistCard v-if="artistName" :artist="artistName" />
     </div>
   </main>
 </template>

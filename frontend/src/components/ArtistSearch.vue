@@ -17,7 +17,6 @@ interface Track {
   id: string
   name: string
   artists: { name: string }[]
-  explicit: boolean
   preview_url: string | null
 }
 const tracks = ref<Track[]>([])
@@ -72,14 +71,16 @@ async function searchArtist(artistName: string) {
   )
   const tracksData = await tracksRes.json()
   tracks.value = tracksData.tracks || []
+  loading.value = false
 }
-loading.value = false
 </script>
 
 <template>
   <div class="home">
-    <v-icon class="icon">mdi-music</v-icon>
-    <div>iBoons</div>
+    <div style="display: flex; margin-bottom: 1rem;">
+      <v-icon class="icon">mdi-music</v-icon>
+      <div>iBoons</div>
+    </div>
     <v-card class="search-card" elevation="2">
       <v-card-title>Search Spotify Artist Top Tracks</v-card-title>
       <v-text-field
@@ -89,12 +90,25 @@ loading.value = false
         :disabled="loading"
         @keyup.enter="onSubmit"
       />
-      <v-btn color="primary" :loading="loading" @click="onSubmit" class="mt-2">Search</v-btn>
+      <v-btn
+        color="primary"
+        :loading="loading"
+        @click="onSubmit"
+        style="margin-left: 10px; margin-bottom: 10px"
+        >Search</v-btn
+      >
       <div v-if="error" class="error">{{ error }}</div>
       <v-list v-if="tracks.length">
         <v-list-item v-for="track in tracks" :key="track.id">
           <template #prepend>
-            <v-icon v-if="track.explicit" color="red">mdi-alert</v-icon>
+            <img
+              v-if="track.album && track.album.images && track.album.images.length"
+              :src="track.album.images[track.album.images.length - 1].url"
+              alt="Album Art"
+              width="64"
+              height="64"
+              style="margin-right: 16px; border-radius: 4px"
+            />
           </template>
           <div class="track">
             <strong>{{ track.name }}</strong>
@@ -129,6 +143,8 @@ h3 {
 
 .search-card {
   max-width: 500px;
+  max-height: 500px;
+  overflow-y: scroll;
   margin: 0 auto;
 }
 
