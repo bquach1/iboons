@@ -1,12 +1,15 @@
 <script setup lang="ts">
-const props = defineProps<{ modelValue: string }>()
-const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
+const props = defineProps<{ artistName: string; currentTrack: object }>()
+const emit = defineEmits<{
+  (e: 'update:artistName', value: string): void
+  (e: 'update:currentTrack', value: object): void
+}>()
 import { ref } from 'vue'
 
-const localInput = ref(props.modelValue)
+const localInput = ref(props.artistName)
 
 function onSubmit() {
-  emit('update:modelValue', localInput.value)
+  emit('update:artistName', localInput.value)
   searchArtist(localInput.value)
 }
 import axios from 'axios'
@@ -19,6 +22,9 @@ interface Track {
   artists: { name: string }[]
   explicit: boolean
   preview_url: string | null
+  album?: {
+    images?: { url: string }[]
+  }
 }
 const tracks = ref<Track[]>([])
 
@@ -72,14 +78,19 @@ async function searchArtist(artistName: string) {
   )
   const tracksData = await tracksRes.json()
   tracks.value = tracksData.tracks || []
+  loading.value = false
 }
-loading.value = false
 </script>
 
 <template>
   <div class="home">
-    <v-icon class="icon">mdi-music</v-icon>
-    <div>iBoons</div>
+    <div style="text-align: center; margin-bottom: 1rem">
+      <h1>
+        <v-icon class="icon" large>mdi-music</v-icon>
+        iBoons
+      </h1>
+      <h3>Discover music with ease</h3>
+    </div>
     <v-card class="search-card" elevation="2">
       <v-card-title>Search Spotify Artist Top Tracks</v-card-title>
       <v-text-field
@@ -89,14 +100,21 @@ loading.value = false
         :disabled="loading"
         @keyup.enter="onSubmit"
       />
-      <v-btn color="primary" :loading="loading" @click="onSubmit" class="mt-2">Search</v-btn>
+      <v-btn color="primary" :loading="loading" @click="onSubmit" class="ml-5 mb-5">Search</v-btn>
       <div v-if="error" class="error">{{ error }}</div>
       <v-list v-if="tracks.length">
         <v-list-item v-for="track in tracks" :key="track.id">
           <template #prepend>
-            <v-icon v-if="track.explicit" color="red">mdi-alert</v-icon>
+            <img
+              style="margin-right: 8px"
+              v-if="track.album?.images?.[0]"
+              :src="track.album.images[0].url"
+              alt="Album Art"
+              height="40"
+              width="40"
+            />
           </template>
-          <div class="track">
+          <div class="track" @click="emit('update:currentTrack', track)">
             <strong>{{ track.name }}</strong>
             <div class="track-artist">{{ track.artists.map((a) => a.name).join(', ') }}</div>
             <audio

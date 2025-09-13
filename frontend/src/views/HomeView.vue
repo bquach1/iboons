@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import ArtistSearch from '@/components/ArtistSearch.vue'
-import ArtistCard from '@/components/ArtistCard.vue'
+import TrackCard from '@/components/TrackCard.vue'
 import { ref } from 'vue'
 
 const artistName = ref('')
-const artist = ref(null)
+const currentTrack = ref<object>({})
 
 async function handleSearch(name: string) {
   artistName.value = name
@@ -14,8 +14,12 @@ async function handleSearch(name: string) {
 <template>
   <main>
     <div class="home-container">
-      <ArtistSearch v-model="artistName" @search="handleSearch" />
-      <ArtistCard v-if="artist" :artist="artist" />
+      <ArtistSearch
+        v-model:artist-name="artistName"
+        v-model:currentTrack="currentTrack"
+        @search="handleSearch"
+      />
+      <TrackCard v-if="Object.keys(currentTrack).length" :track="currentTrack" />
     </div>
   </main>
 </template>
