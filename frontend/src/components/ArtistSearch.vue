@@ -20,7 +20,6 @@ interface Track {
   id: string
   name: string
   artists: { name: string }[]
-  explicit: boolean
   preview_url: string | null
   album?: {
     images?: { url: string }[]
@@ -147,6 +146,8 @@ h3 {
 
 .search-card {
   max-width: 500px;
+  max-height: 500px;
+  overflow-y: scroll;
   margin: 0 auto;
 }
 
