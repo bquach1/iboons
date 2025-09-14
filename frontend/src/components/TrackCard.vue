@@ -158,15 +158,15 @@ const props = defineProps<{ track: Track }>()
 
 <template>
   <v-card class="track-card" elevation="3">
-    <v-img :src="props.track.album?.images?.[0]?.url" height="200" class="mb-2" />
+    <v-img :src="props.track.album?.images?.[0]?.url" height="200" class="mx-4 my-4" />
     <v-card-title>{{ props.track.name }}</v-card-title>
-    <v-card-subtitle>Spotify Playback</v-card-subtitle>
     <v-btn
       :disabled="!playerReady || !sdkLoaded || !props.track.uri || !accessToken"
-      @click="playTrack"
+      @click="isPlaying ? (isPlaying = false) : playTrack()"
       color="primary"
+      class="text-none ml-3 mb-3"
     >
-      Play on Spotify
+      {{ isPlaying ? 'Stop' : 'Play' }}
     </v-btn>
     <v-btn v-if="!accessToken" @click="loginWithSpotify" color="secondary">
       Login with Spotify
@@ -176,7 +176,7 @@ const props = defineProps<{ track: Track }>()
 
 <style scoped>
 .track-card {
-  max-width: 600px;
+  width: 600px;
   margin: 2rem auto;
 }
 .album-card,

@@ -99,8 +99,10 @@ async function searchArtist(artistName: string) {
         :disabled="loading"
         @keyup.enter="onSubmit"
       />
-      <v-btn color="primary" :loading="loading" @click="onSubmit" class="ml-5 mb-5">Search</v-btn>
-      <div v-if="error" class="error">{{ error }}</div>
+      <v-btn color="primary" :loading="loading" @click="onSubmit" class="ml-5 mb-2 text-none"
+        >Search</v-btn
+      >
+      <div v-if="error" class="error mb-3 ml-3">{{ error }}</div>
       <v-list v-if="tracks.length">
         <v-list-item v-for="track in tracks" :key="track.id">
           <template #prepend>
